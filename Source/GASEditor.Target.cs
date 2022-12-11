@@ -10,5 +10,6 @@ public class GASEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.Add("GAS");
-	}
+        IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+    }
 }
