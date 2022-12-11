@@ -8,6 +8,7 @@
 #include "Input/GASEnhancedInputComponent.h"
 #include "GASGameplayTags.h"
 #include "Ability/GASAbilitySystemComponent.h"
+#include "Ability/GASAbilitySet.h"
 
 AGASCharacter::AGASCharacter()
 {
@@ -49,6 +50,23 @@ AGASCharacter::AGASCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+}
+
+void AGASCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	
+}
+
+void AGASCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	for (const auto& AbilitySet : AbilitySets)
+	{
+		AbilitySet.Get()->GiveToAbilitySystem(AbilitySystemComponent, this);
+	}
 }
 
 UAbilitySystemComponent* AGASCharacter::GetAbilitySystemComponent() const

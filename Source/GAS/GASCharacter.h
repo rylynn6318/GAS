@@ -17,6 +17,8 @@ class AGASCharacter : public ACharacter, public IAbilitySystemInterface
 
 public:
 	AGASCharacter();
+	virtual void BeginPlay() override;
+	virtual void PossessedBy(AController* NewController) override;
 
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom.Get(); }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera.Get(); }
@@ -55,7 +57,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<class UGASInputConfig> InputConfig;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<class UGASAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
+	TArray<TObjectPtr<class UGASAbilitySet>> AbilitySets;
 };
 
