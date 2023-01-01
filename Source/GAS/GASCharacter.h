@@ -26,13 +26,25 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual class UGASAbilitySystemComponent* GetGASAbilitySystemComponent() const;
 
-	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
-	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
-	void Input_Move(const FInputActionValue& InputActionValue);
-	void Input_Look(const FInputActionValue& InputActionValue);
-	void Input_Sprint(const FInputActionValue& InputActionValue);
-	void Input_Dodge(const FInputActionValue& InputActionValue);
-	void Input_Jump(const FInputActionValue& InputActionValue);
+	virtual void Input_AbilityInputTagPressed(FGameplayTag InputTag);
+	virtual void Input_AbilityInputTagReleased(FGameplayTag InputTag);
+	virtual void Input_Move(const FInputActionValue& InputActionValue);
+	virtual void Input_Look(const FInputActionValue& InputActionValue);
+	virtual void Input_Sprint(const FInputActionValue& InputActionValue);
+	virtual void Input_Dodge(const FInputActionValue& InputActionValue);
+	virtual void Input_Jump(const FInputActionValue& InputActionValue);
+
+	UFUNCTION(BlueprintCallable)
+	virtual float GetHealth() const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual float GetMaxHealth() const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual float GetMana() const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual float GetMaxMana() const;
 
 protected:
 	void MoveForward(float Value);
@@ -62,5 +74,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
 	TArray<TObjectPtr<class UGASAbilitySet>> AbilitySets;
+
+	UPROPERTY()
+	TObjectPtr<class UBaseStatAttributeSet> StatAttributeSet;
 };
 

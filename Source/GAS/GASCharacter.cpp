@@ -9,6 +9,7 @@
 #include "GASGameplayTags.h"
 #include "Ability/GASAbilitySystemComponent.h"
 #include "Ability/GASAbilitySet.h"
+#include "Ability/BaseStatAttributeSet.h"
 
 AGASCharacter::AGASCharacter()
 {
@@ -47,6 +48,8 @@ AGASCharacter::AGASCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	AbilitySystemComponent = CreateDefaultSubobject<UGASAbilitySystemComponent>(TEXT("GASAbilitySystemComponent"));
+
+	StatAttributeSet = CreateDefaultSubobject<UBaseStatAttributeSet>(TEXT("AttributeSet"));
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
@@ -147,6 +150,26 @@ void AGASCharacter::Input_Dodge(const FInputActionValue& InputActionValue)
 void AGASCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 {
 	Jump();
+}
+
+float AGASCharacter::GetHealth() const
+{
+	return StatAttributeSet.Get()->GetHealth();
+}
+
+float AGASCharacter::GetMaxHealth() const
+{
+	return StatAttributeSet.Get()->GetMaxHealth();
+}
+
+float AGASCharacter::GetMana() const
+{
+	return StatAttributeSet.Get()->GetMana();
+}
+
+float AGASCharacter::GetMaxMana() const
+{
+	return StatAttributeSet.Get()->GetMaxMana();
 }
 
 //////////////////////////////////////////////////////////////////////////
