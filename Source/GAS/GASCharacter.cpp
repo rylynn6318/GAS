@@ -10,6 +10,7 @@
 #include "Ability/GASAbilitySystemComponent.h"
 #include "Ability/GASAbilitySet.h"
 #include "Ability/BaseStatAttributeSet.h"
+#include "GameplayEffectTypes.h"
 
 AGASCharacter::AGASCharacter()
 {
@@ -48,6 +49,8 @@ AGASCharacter::AGASCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	AbilitySystemComponent = CreateDefaultSubobject<UGASAbilitySystemComponent>(TEXT("GASAbilitySystemComponent"));
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(StatAttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(StatAttributeSet->GetMaxHealthAttribute()).AddUObject(this, &ThisClass::OnMaxHealthChanged);
 
 	StatAttributeSet = CreateDefaultSubobject<UBaseStatAttributeSet>(TEXT("AttributeSet"));
 
@@ -59,7 +62,22 @@ void AGASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	for (TSubclassOf<UGameplayAbility>& PassiveAbility : PassiveGameplayAbilities)
+	{
+		AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(PassiveAbility, GetCharacterLevel(), INDEX_NONE, this));
+	}
+
+	for (TSubclassOf<UGameplayEffect>& GameplayEffect : PassiveGameplayEffects)
+	{
+		FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+		EffectContext.AddSourceObject(this);
+
+		FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(GameplayEffect, GetCharacterLevel(), EffectContext);
+		if (NewHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent);
+		}
+	}
 }
 
 void AGASCharacter::PossessedBy(AController* NewController)
@@ -210,6 +228,16 @@ void AGASCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
+}
+
+void AGASCharacter::OnHealthChanged(const FOnAttributeChangeData& ChangeData)
+{
+	OnHPChanged.Broadcast(GetHealth(), GetMaxHealth());
+}
+
+void AGASCharacter::OnMaxHealthChanged(const FOnAttributeChangeData& ChangeData)
+{
+	OnHPChanged.Broadcast(GetHealth(), GetMaxHealth());
 }
 
 void AGASCharacter::MoveForward(float Value)

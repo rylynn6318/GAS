@@ -9,6 +9,9 @@
 
 struct FInputActionValue;
 struct FGameplayTag;
+struct FOnAttributeChangeData;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float, CurrentHP, float, MaxHP);
 
 UCLASS(BlueprintType, Blueprintable)
 class AGASCharacter : public ACharacter, public IAbilitySystemInterface
@@ -57,12 +60,18 @@ protected:
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
 
+	void OnHealthChanged(const FOnAttributeChangeData& ChangeData);
+	void OnMaxHealthChanged(const FOnAttributeChangeData& ChangeData);
+
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
 	float TurnRateGamepad;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnHPChanged OnHPChanged;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -85,5 +94,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 CharacterLevel;
-};
 
+	UPROPERTY(EditDefaultsOnly, Category = "GASCharacter")
+	TArray<TSubclassOf<class UGameplayAbility>> PassiveGameplayAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category = "GASCharacter")
+	TArray<TSubclassOf<class UGameplayEffect>> PassiveGameplayEffects;
+};
