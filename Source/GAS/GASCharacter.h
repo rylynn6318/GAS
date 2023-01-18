@@ -46,6 +46,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual float GetMaxMana() const;
 
+	UFUNCTION(BlueprintCallable)
+	virtual int32 GetCharacterLevel() const {return CharacterLevel;}
+
+	
+
 protected:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -77,5 +82,8 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UBaseStatAttributeSet> StatAttributeSet;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 CharacterLevel;
 };
 
