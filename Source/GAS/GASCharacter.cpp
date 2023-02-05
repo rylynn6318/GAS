@@ -132,6 +132,18 @@ void AGASCharacter::OnMaxHealthChanged(const FOnAttributeChangeData& ChangeData)
 	OnHPChanged.Broadcast(GetHealth(), GetMaxHealth());
 }
 
+void AGASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &AGASCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("Move Right / Left", this, &AGASCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn Right / Left Gamepad", this, &AGASCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("Look Up / Down Gamepad", this, &AGASCharacter::LookUpAtRate);
+}
+
 void AGASCharacter::MoveForward(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))

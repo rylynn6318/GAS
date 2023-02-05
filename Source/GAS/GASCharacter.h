@@ -45,6 +45,9 @@ public:
 	virtual int32 GetCharacterLevel() const {return CharacterLevel;}
 
 protected:
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	
+protected:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void TurnAtRate(float Rate);
