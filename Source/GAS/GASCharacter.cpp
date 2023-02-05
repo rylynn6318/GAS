@@ -1,14 +1,10 @@
 #include "GASCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Input/GASEnhancedInputComponent.h"
-#include "GASGameplayTags.h"
 #include "Ability/GASAbilitySystemComponent.h"
-#include "Ability/GASAbilitySet.h"
 #include "Ability/BaseStatAttributeSet.h"
 #include "GameplayEffectTypes.h"
 
@@ -52,8 +48,6 @@ AGASCharacter::AGASCharacter()
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(StatAttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(StatAttributeSet->GetMaxHealthAttribute()).AddUObject(this, &ThisClass::OnMaxHealthChanged);
 
-	StatAttributeSet = CreateDefaultSubobject<UBaseStatAttributeSet>(TEXT("AttributeSet"));
-
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -84,10 +78,6 @@ void AGASCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	for (const auto& AbilitySet : AbilitySets)
-	{
-		AbilitySet.Get()->GiveToAbilitySystem(AbilitySystemComponent, this);
-	}
 }
 
 UAbilitySystemComponent* AGASCharacter::GetAbilitySystemComponent() const
@@ -98,76 +88,6 @@ UAbilitySystemComponent* AGASCharacter::GetAbilitySystemComponent() const
 class UGASAbilitySystemComponent* AGASCharacter::GetGASAbilitySystemComponent() const
 {
 	return AbilitySystemComponent.Get();
-}
-
-void AGASCharacter::Input_AbilityInputTagPressed(FGameplayTag InputTag)
-{
-	if (AbilitySystemComponent)
-	{
-		AbilitySystemComponent->AbilityInputTagPressed(InputTag);
-	}
-}
-
-void AGASCharacter::Input_AbilityInputTagReleased(FGameplayTag InputTag)
-{
-	if (AbilitySystemComponent)
-	{
-		AbilitySystemComponent->AbilityInputTagReleased(InputTag);
-	}
-}
-
-void AGASCharacter::Input_Move(const FInputActionValue& InputActionValue)
-{
-	if (Controller != nullptr)
-	{
-		const FVector2D MoveValue = InputActionValue.Get<FVector2D>();
-		const FRotator MovementRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
-
-		if (MoveValue.X != 0.0f)
-		{
-			const FVector MovementDirection = MovementRotation.RotateVector(FVector::RightVector);
-			AddMovementInput(MovementDirection, MoveValue.X);
-		}
-
-		if (MoveValue.Y != 0.0f)
-		{
-			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-			AddMovementInput(MovementDirection, MoveValue.Y);
-		}
-	}
-}
-
-void AGASCharacter::Input_Look(const FInputActionValue& InputActionValue)
-{
-	if (Controller != nullptr)
-	{
-		const FVector2D LookValue = InputActionValue.Get<FVector2D>();
-
-		if (LookValue.X != 0.0f)
-		{
-			TurnAtRate(LookValue.X);
-		}
-
-		if (LookValue.Y != 0.0f)
-		{
-			LookUpAtRate(LookValue.Y);
-		}
-	}
-}
-
-void AGASCharacter::Input_Sprint(const FInputActionValue& InputActionValue)
-{
-
-}
-
-void AGASCharacter::Input_Dodge(const FInputActionValue& InputActionValue)
-{
-
-}
-
-void AGASCharacter::Input_Jump(const FInputActionValue& InputActionValue)
-{
-	Jump();
 }
 
 float AGASCharacter::GetHealth() const
@@ -188,34 +108,6 @@ float AGASCharacter::GetMana() const
 float AGASCharacter::GetMaxMana() const
 {
 	return StatAttributeSet.Get()->GetMaxMana();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Input
-
-void AGASCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
-	check(PlayerInputComponent);
-
-	if (UGASEnhancedInputComponent* EnhancedInputComponent = Cast<UGASEnhancedInputComponent>(PlayerInputComponent))
-	{
-		const FGASGameplayTags& GameplayTags = FGASGameplayTags::Get();
-
-		TArray<uint32> BindHandles;
-		EnhancedInputComponent->BindAbilityActions(
-			InputConfig,
-			this,
-			&ThisClass::Input_AbilityInputTagPressed,
-			&ThisClass::Input_AbilityInputTagReleased,
-			BindHandles
-		);
-
-		EnhancedInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move);
-		EnhancedInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
-		EnhancedInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Sprint, ETriggerEvent::Triggered, this, &ThisClass::Input_Sprint);
-		EnhancedInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Dodge, ETriggerEvent::Triggered, this, &ThisClass::Input_Dodge);
-		EnhancedInputComponent->BindNativeAction(InputConfig, GameplayTags.InputTag_Jump, ETriggerEvent::Triggered, this, &ThisClass::Input_Jump);
-	}
 }
 
 void AGASCharacter::TurnAtRate(float Rate)

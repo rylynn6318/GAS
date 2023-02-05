@@ -29,14 +29,6 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual class UGASAbilitySystemComponent* GetGASAbilitySystemComponent() const;
 
-	virtual void Input_AbilityInputTagPressed(FGameplayTag InputTag);
-	virtual void Input_AbilityInputTagReleased(FGameplayTag InputTag);
-	virtual void Input_Move(const FInputActionValue& InputActionValue);
-	virtual void Input_Look(const FInputActionValue& InputActionValue);
-	virtual void Input_Sprint(const FInputActionValue& InputActionValue);
-	virtual void Input_Dodge(const FInputActionValue& InputActionValue);
-	virtual void Input_Jump(const FInputActionValue& InputActionValue);
-
 	UFUNCTION(BlueprintCallable)
 	virtual float GetHealth() const;
 
@@ -52,8 +44,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual int32 GetCharacterLevel() const {return CharacterLevel;}
 
-	
-
 protected:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -62,9 +52,6 @@ protected:
 
 	void OnHealthChanged(const FOnAttributeChangeData& ChangeData);
 	void OnMaxHealthChanged(const FOnAttributeChangeData& ChangeData);
-
-protected:
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
@@ -80,14 +67,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> FollowCamera;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TObjectPtr<class UGASInputConfig> InputConfig;
-
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<class UGASAbilitySystemComponent> AbilitySystemComponent;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
-	TArray<TObjectPtr<class UGASAbilitySet>> AbilitySets;
 
 	UPROPERTY()
 	TObjectPtr<class UBaseStatAttributeSet> StatAttributeSet;
