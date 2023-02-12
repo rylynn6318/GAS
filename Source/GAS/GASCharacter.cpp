@@ -47,7 +47,9 @@ AGASCharacter::AGASCharacter()
 	AbilitySystemComponent = CreateDefaultSubobject<UGASAbilitySystemComponent>(TEXT("GASAbilitySystemComponent"));
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(StatAttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(StatAttributeSet->GetMaxHealthAttribute()).AddUObject(this, &ThisClass::OnMaxHealthChanged);
-
+	
+	StatAttributeSet = CreateDefaultSubobject<UBaseStatAttributeSet>(TEXT("AttributeSet"));
+	
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
