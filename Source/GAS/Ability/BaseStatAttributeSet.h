@@ -35,8 +35,8 @@ protected:
 public:
 	ATTRIBUTE_ACCESSORS(UBaseStatAttributeSet, Health)
 	ATTRIBUTE_ACCESSORS(UBaseStatAttributeSet, MaxHealth)
-	ATTRIBUTE_ACCESSORS(UBaseStatAttributeSet, Mana)
-	ATTRIBUTE_ACCESSORS(UBaseStatAttributeSet, MaxMana)
+	ATTRIBUTE_ACCESSORS(UBaseStatAttributeSet, Stamina)
+	ATTRIBUTE_ACCESSORS(UBaseStatAttributeSet, MaxStamina)
 	ATTRIBUTE_ACCESSORS(UBaseStatAttributeSet, AttackPower)
 	ATTRIBUTE_ACCESSORS(UBaseStatAttributeSet, DefensePower)
 	ATTRIBUTE_ACCESSORS(UBaseStatAttributeSet, MoveSpeed)
@@ -50,10 +50,10 @@ protected:
 	FGameplayAttributeData MaxHealth;
 
 	UPROPERTY(BlueprintReadOnly, Category = "BaseStat")
-	FGameplayAttributeData Mana;
+	FGameplayAttributeData Stamina;
 
 	UPROPERTY(BlueprintReadOnly, Category = "BaseStat")
-	FGameplayAttributeData MaxMana;
+	FGameplayAttributeData MaxStamina;
 
 	UPROPERTY(BlueprintReadOnly, Category = "BaseStat")
 	FGameplayAttributeData MoveSpeed;

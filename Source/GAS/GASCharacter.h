@@ -11,7 +11,7 @@ struct FInputActionValue;
 struct FGameplayTag;
 struct FOnAttributeChangeData;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float, CurrentHP, float, MaxHP);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAttributeChanged, float, CurrentAttribute, float, MaxAttribute, int32, AttibuteNumber);
 
 UCLASS(BlueprintType, Blueprintable)
 class AGASCharacter : public ACharacter, public IAbilitySystemInterface
@@ -36,10 +36,10 @@ public:
 	virtual float GetMaxHealth() const;
 
 	UFUNCTION(BlueprintCallable)
-	virtual float GetMana() const;
+	virtual float GetStamina() const;
 
 	UFUNCTION(BlueprintCallable)
-	virtual float GetMaxMana() const;
+	virtual float GetMaxStamina() const;
 
 	UFUNCTION(BlueprintCallable)
 	virtual int32 GetCharacterLevel() const {return CharacterLevel;}
@@ -55,13 +55,15 @@ protected:
 
 	void OnHealthChanged(const FOnAttributeChangeData& ChangeData);
 	void OnMaxHealthChanged(const FOnAttributeChangeData& ChangeData);
+	void OnStaminaChanged(const FOnAttributeChangeData& ChangeData);
+	void OnMaxStaminaChanged(const FOnAttributeChangeData& ChangeData);
 	
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
 	float TurnRateGamepad;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnHPChanged OnHPChanged;
+	FOnAttributeChanged OnAttributeChanged;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

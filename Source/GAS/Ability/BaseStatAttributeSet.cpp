@@ -11,9 +11,9 @@ void UBaseStatAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribu
 	{
 		AdjustAttributeForMaxChange(Health, MaxHealth, NewValue, GetHealthAttribute());
 	}
-	else if (Attribute == GetMaxManaAttribute())
+	else if (Attribute == GetMaxStaminaAttribute())
 	{
-		AdjustAttributeForMaxChange(Mana, MaxMana, NewValue, GetManaAttribute());
+		AdjustAttributeForMaxChange(Stamina, MaxStamina, NewValue, GetStaminaAttribute());
 	}
 }
 
@@ -30,9 +30,9 @@ void UBaseStatAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCa
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
 	}
-	else if (Data.EvaluatedData.Attribute == GetManaAttribute())
+	else if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
 	{
-		SetMana(FMath::Clamp(GetMana(), 0.0f, GetMaxMana()));
+		SetStamina(FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina()));
 	}
 }
 

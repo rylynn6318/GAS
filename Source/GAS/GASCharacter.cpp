@@ -47,7 +47,9 @@ AGASCharacter::AGASCharacter()
 	AbilitySystemComponent = CreateDefaultSubobject<UGASAbilitySystemComponent>(TEXT("GASAbilitySystemComponent"));
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(StatAttributeSet->GetHealthAttribute()).AddUObject(this, &ThisClass::OnHealthChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(StatAttributeSet->GetMaxHealthAttribute()).AddUObject(this, &ThisClass::OnMaxHealthChanged);
-	
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(StatAttributeSet->GetStaminaAttribute()).AddUObject(this, &ThisClass::OnStaminaChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(StatAttributeSet->GetMaxStaminaAttribute()).AddUObject(this, &ThisClass::OnMaxStaminaChanged);
+
 	StatAttributeSet = CreateDefaultSubobject<UBaseStatAttributeSet>(TEXT("AttributeSet"));
 	
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
@@ -102,14 +104,14 @@ float AGASCharacter::GetMaxHealth() const
 	return StatAttributeSet.Get()->GetMaxHealth();
 }
 
-float AGASCharacter::GetMana() const
+float AGASCharacter::GetStamina() const
 {
-	return StatAttributeSet.Get()->GetMana();
+	return StatAttributeSet.Get()->GetStamina();
 }
 
-float AGASCharacter::GetMaxMana() const
+float AGASCharacter::GetMaxStamina() const
 {
-	return StatAttributeSet.Get()->GetMaxMana();
+	return StatAttributeSet.Get()->GetMaxStamina();
 }
 
 void AGASCharacter::TurnAtRate(float Rate)
@@ -126,12 +128,22 @@ void AGASCharacter::LookUpAtRate(float Rate)
 
 void AGASCharacter::OnHealthChanged(const FOnAttributeChangeData& ChangeData)
 {
-	OnHPChanged.Broadcast(GetHealth(), GetMaxHealth());
+	OnAttributeChanged.Broadcast(GetHealth(), GetMaxHealth(),0);
 }
 
 void AGASCharacter::OnMaxHealthChanged(const FOnAttributeChangeData& ChangeData)
 {
-	OnHPChanged.Broadcast(GetHealth(), GetMaxHealth());
+	OnAttributeChanged.Broadcast(GetHealth(), GetMaxHealth(),0);
+}
+
+void AGASCharacter::OnStaminaChanged(const FOnAttributeChangeData& ChangeData)
+{
+	OnAttributeChanged.Broadcast(GetStamina(), GetMaxStamina(),1);
+}
+
+void AGASCharacter::OnMaxStaminaChanged(const FOnAttributeChangeData& ChangeData)
+{
+	OnAttributeChanged.Broadcast(GetStamina(), GetMaxStamina(),1);
 }
 
 void AGASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
